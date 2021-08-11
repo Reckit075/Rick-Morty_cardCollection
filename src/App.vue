@@ -1,16 +1,15 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <Card name="Morty Smith" status="Alive" image="https://rickandmortyapi.com/api/character/avatar/2.jpeg"/>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import Card from './components/Card.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    HelloWorld
+    Card
   }
 });
 </script>
