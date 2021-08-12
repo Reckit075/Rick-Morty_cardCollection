@@ -1,5 +1,5 @@
 <template>
-  <Card name="Morty Smith" status="Alive" image="https://rickandmortyapi.com/api/character/avatar/2.jpeg"/>
+  <Card name="Morty Smith" status="Alive" image="https://rickandmortyapi.com/api/character/avatar/2.jpeg" species="Human" location="Earth"/>
 </template>
 
 <script lang="ts">
