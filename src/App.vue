@@ -1,15 +1,16 @@
 <template>
-  <Card name="Morty Smith" status="Alive" image="https://rickandmortyapi.com/api/character/avatar/2.jpeg" species="Human" location="Earth"/>
+  <!-- <Card name="Morty Smith" status="Alive" image="https://rickandmortyapi.com/api/character/avatar/2.jpeg" species="Human" location="Earth"/> -->
+  <Container />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import Card from './components/Card.vue';
+import Container from './components/Container.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    Card
+    Container
   }
 });
 </script>
