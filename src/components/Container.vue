@@ -1,15 +1,27 @@
 <template>
-  <div class="wrapper">
-    <div v-for="character in characters" :key="character.id">
-      <Card
-        :name="character.name"
-        :status="character.status"
-        :image="character.image"
-        :species="character.species"
-        :location="character.location.name"
-      />
+  <input
+    v-model="filterValue"
+    type="text"
+    placeholder="Search"
+    @input="filter($event.target.value)"
+    class="searchBar"
+  />
+  <div v-if="error">{{ error }}</div>
+  <div v-if="characters.length">
+    <div class="wrapper">
+      <div v-for="character in characters" :key="character.id">
+        <Card
+          :name="character.name"
+          :status="character.status"
+          :image="character.image"
+          :species="character.species"
+          :location="character.location.name"
+        />
+      </div>
     </div>
   </div>
+  <div v-else>Loading...</div>
+
   <button v-if="numberOfPage < 35" @click="loadMore()" class="button">
     Load more⬇️.
   </button>
@@ -17,8 +29,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted } from "vue";
 import Card from "./Card.vue";
+import useLoadCharacters from "../Composables/useLoadCharacters";
 
 export default defineComponent({
   name: "Container",
@@ -26,40 +39,36 @@ export default defineComponent({
     Card,
   },
   setup() {
-    interface Character {
-      name: string;
-      status: string;
-      image: string;
-      species: string;
-      location: string;
-    }
-    const characters = ref<Array<Character>>([]);
-    const numberOfPage = ref<number>(2);
-    return { characters, numberOfPage };
-  },
-  mounted() {
-    fetch("https://rickandmortyapi.com/api/character/?page=1")
-      .then((res) => res.json())
-      .then((data) => {
-        this.characters = data.results;
-      });
-  },
-  methods: {
-    loadMore() {
-      fetch(
-        `https://rickandmortyapi.com/api/character/?page=${this.numberOfPage}`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          this.characters.push(...data.results);
-          this.numberOfPage = +this.numberOfPage + 1;
-        });
-    },
+    const { characters, error, useCharactersFetcher, useLoadMore, useFilter, numberOfPage } =
+      useLoadCharacters();
+
+    onMounted(() => {
+      useCharactersFetcher();
+    });
+
+    const filter = (phrase: string) => useFilter(phrase);
+    const loadMore = () => useLoadMore();
+
+    return { characters, error, useCharactersFetcher, filter, loadMore, numberOfPage };
   },
 });
 </script>
 
 <style scoped>
+.searchBar {
+  background-color: rgb(34, 34, 34);
+  border: 1px solid black;
+  border-radius: 20px;
+  width: 40vw;
+  height: 5vh;
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  margin-bottom: 2vh;
+}
+.searchBar:focus {
+  outline: none;
+}
 .wrapper {
   display: flex;
   flex-wrap: wrap;
@@ -99,7 +108,7 @@ export default defineComponent({
   transition: none;
 }
 .button:hover {
-  cursor:pointer;
+  cursor: pointer;
   background-color: #2194e0;
   color: #fff;
   border-bottom: 4px solid darken(#2194e0, 10%);

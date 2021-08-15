@@ -78,6 +78,7 @@ export default defineComponent({
 }
 .card_data{
   text-align: center;
+  width: 100%;
 }
 .section {
   display: flex;
