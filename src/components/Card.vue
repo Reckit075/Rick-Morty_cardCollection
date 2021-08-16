@@ -4,7 +4,23 @@
       >
     </div>
     <div class="card_data">
-      <h4 class="card_name">{{ name }}</h4>
+      <div class="card_header">
+        <h4 class="card_name">{{ name }}</h4>
+        <span
+          v-if="!isInFav"
+          class="material-icons-outlined add_icon md-36"
+          @click="addToFav(id, name)"
+        >
+          favorite_border
+        </span>
+        <span
+          v-else
+          class="material-icons-outlined add_icon md-36"
+          @click="removeFromFav(id, name)"
+        >
+          favorite
+        </span>
+      </div>
       <div class="card_stats">
         <div class="section">
           <h4 class="text_gray">status:</h4>
@@ -29,12 +45,6 @@
         </div>
       </div>
     </div>
-    <button v-if="isInFav" class="button" @click="removeFromFav(id, name)">
-      Remove from favourite characters.
-    </button>
-    <button v-else class="button" @click="addToFav(id, name)">
-      Add to favourite characters.
-    </button>
   </div>
 </template>
 
@@ -62,6 +72,7 @@ export default defineComponent({
     const removeFromFav = (id: number, name: string) => {
       isInFav.value = false;
       useRemoveFromFav(id, name);
+      emit("update-delete-data");
     };
     return { isInFav, checkIsInFav, addToFav, removeFromFav };
   },
@@ -112,6 +123,18 @@ export default defineComponent({
   text-align: center;
   width: 100%;
 }
+.add_icon {
+  font-size: 36px;
+}
+.add_icon:hover {
+  cursor: pointer;
+  color: red;
+}
+.card_header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .section {
   display: flex;
   margin-bottom: -10px;
@@ -158,8 +181,8 @@ export default defineComponent({
   border-top-left-radius: 20px;
 }
 @media only screen and (max-width: 600px) {
-  .wrapper{
-    height:92vh
+  .wrapper {
+    height: 92vh;
   }
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <button v-if="!show" @click="changeListVisibility()">
+  <button class="button" v-if="!show" @click="changeListVisibility()">
     Show Fav characters.
   </button>
-  <button v-else @click="changeListVisibility()">Hide Fav characters.</button>
+  <button class="button" v-else @click="changeListVisibility()">Hide Fav characters.</button>
   <input
     v-model="filterValue"
     type="text"
@@ -21,6 +21,7 @@
           :image="character.image"
           :species="character.species"
           :location="character.location.name"
+           @update-delete-data="updateDeleteData"
         />
       </div>
     </div>
@@ -28,7 +29,7 @@
   <div v-else>Loading...</div>
 
   <button
-    v-if="numberOfPage < 35 && phrase.length == 0"
+    v-if="numberOfPage < 35 && phrase.length == 0 && !show"
     @click="loadMore()"
     class="button"
   >
@@ -67,6 +68,11 @@ export default defineComponent({
       useCharactersFetcher();
     });
 
+    const updateDeleteData = () => {
+      console.log("alleluja")
+      useLoadFav(useGetAllFavIds())
+    }
+
     const filter = (phraseValue: string) => useFilter(phraseValue);
     const loadMore = () => useLoadMore();
 
@@ -90,6 +96,7 @@ export default defineComponent({
       changeListVisibility,
       show,
       favNames,
+      updateDeleteData
     };
   },
 });
