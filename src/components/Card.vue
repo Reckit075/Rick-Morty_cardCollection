@@ -29,15 +29,47 @@
         </div>
       </div>
     </div>
+    <button v-if="isInFav" class="button" @click="removeFromFav(id, name)">
+      Remove from favourite characters.
+    </button>
+    <button v-else class="button" @click="addToFav(id, name)">
+      Add to favourite characters.
+    </button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
+import useLocalStorage from "../Composables/useLocalStorage";
 
 export default defineComponent({
   name: "Card",
+  setup(props) {
+    const isInFav = ref<boolean>(false);
+    const { useCheckIsInFav, useAddToFav, useRemoveFromFav } =
+      useLocalStorage();
+
+    onMounted(() => {
+      checkIsInFav(props.id, props.name);
+    });
+
+    const checkIsInFav = (id: number, name: string) =>
+      (isInFav.value = useCheckIsInFav(id, name));
+    const addToFav = (id: number, name: string) => {
+      isInFav.value = true;
+      useAddToFav(id, name);
+    };
+    const removeFromFav = (id: number, name: string) => {
+      isInFav.value = false;
+      useRemoveFromFav(id, name);
+    };
+    return { isInFav, checkIsInFav, addToFav, removeFromFav };
+  },
   props: {
+    id: {
+      required: true,
+      type: Number,
+    },
     name: {
       required: true,
       type: String,
@@ -66,7 +98,7 @@ export default defineComponent({
 .wrapper {
   background: rgb(255, 255, 255);
   width: 300px;
-  height: 80vh;
+  height: 82vh;
   display: inline-block;
   margin-left: 1.4vw;
   margin-bottom: 10vh;
@@ -76,7 +108,7 @@ export default defineComponent({
   box-shadow: -1px 15px 30px -12px black;
   z-index: 9999;
 }
-.card_data{
+.card_data {
   text-align: center;
   width: 100%;
 }
@@ -124,5 +156,10 @@ export default defineComponent({
   background-size: cover;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
+}
+@media only screen and (max-width: 600px) {
+  .wrapper{
+    height:92vh
+  }
 }
 </style>

@@ -1,4 +1,12 @@
 <template>
+
+  <button v-if="!show" @click="changeListVisibility()">Show Fav characters</button>
+  <button v-else @click="changeListVisibility()">Hide Fav characters.</button>
+  <ul v-if="show">
+    <div v-for="favName in favNames" :key="favName">
+      <li>{{ favName }}</li>
+    </div>
+  </ul>
   <input
     v-model="filterValue"
     type="text"
@@ -11,6 +19,7 @@
     <div class="wrapper">
       <div v-for="character in characters" :key="character.id">
         <Card
+          :id="character.id"
           :name="character.name"
           :status="character.status"
           :image="character.image"
@@ -22,16 +31,21 @@
   </div>
   <div v-else>Loading...</div>
 
-  <button v-if="numberOfPage < 35" @click="loadMore()" class="button">
+  <button
+    v-if="numberOfPage < 35 && phrase.length == 0"
+    @click="loadMore()"
+    class="button"
+  >
     Load more⬇️.
   </button>
   <p v-else>That's all what we have🙂.</p>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted,onUpdated, ref } from "vue";
 import Card from "./Card.vue";
 import useLoadCharacters from "../Composables/useLoadCharacters";
+import useLocalStorage from "../Composables/useLocalStorage";
 
 export default defineComponent({
   name: "Container",
@@ -39,17 +53,45 @@ export default defineComponent({
     Card,
   },
   setup() {
-    const { characters, error, useCharactersFetcher, useLoadMore, useFilter, numberOfPage } =
-      useLoadCharacters();
+    const show = ref<boolean>(false);
+    const favNames = ref<any>([]);
+    const {
+      characters,
+      error,
+      useCharactersFetcher,
+      useLoadMore,
+      useFilter,
+      numberOfPage,
+      phrase,
+    } = useLoadCharacters();
+    const { useGetAllFav } = useLocalStorage();
 
     onMounted(() => {
       useCharactersFetcher();
+      favNames.value = useGetAllFav();
     });
+    onUpdated(()=>{
+     favNames.value = useGetAllFav();
+    })
 
-    const filter = (phrase: string) => useFilter(phrase);
+    const filter = (phraseValue: string) => useFilter(phraseValue);
     const loadMore = () => useLoadMore();
+    const changeListVisibility = () => {
+      show.value = !show.value;
+    };
 
-    return { characters, error, useCharactersFetcher, filter, loadMore, numberOfPage };
+    return {
+      characters,
+      error,
+      useCharactersFetcher,
+      filter,
+      loadMore,
+      numberOfPage,
+      phrase,
+      changeListVisibility,
+      show,
+      favNames,
+    };
   },
 });
 </script>
@@ -116,5 +158,14 @@ export default defineComponent({
 .button:hover:before {
   transform: skewX(-45deg) translateX(13.5em);
   transition: all 0.5s ease-in-out;
+}
+@media only screen and (max-width: 600px) {
+  .wrapper{
+    justify-content:center;
+  }
+  .searchBar{
+    width: 70vw;
+    margin-top:10px
+  }
 }
 </style>

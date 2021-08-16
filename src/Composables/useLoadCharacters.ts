@@ -4,6 +4,7 @@ import Character from "../types/Character";
 const useLoadCharacters = () => {
   const characters = ref<Array<Character>>([]);
   const error = ref(null);
+  const phrase = ref<string>('');
   const numberOfPage = ref<number>(2);
   const useCharactersFetcher = () => {
     try {
@@ -26,10 +27,11 @@ const useLoadCharacters = () => {
           numberOfPage.value = +numberOfPage.value + 1;
         });
   }
-  const useFilter = (phrase: string) => {
+  const useFilter = (phraseValue: string) => {
     numberOfPage.value = 1;
+    phrase.value = phraseValue
     fetch(
-      `https://rickandmortyapi.com/api/character/?name=${phrase}`
+      `https://rickandmortyapi.com/api/character/?name=${phraseValue}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -37,7 +39,7 @@ const useLoadCharacters = () => {
       });
   }
 
-  return { characters,error, useCharactersFetcher,useLoadMore,useFilter,numberOfPage };
+  return { characters,error, useCharactersFetcher,useLoadMore,useFilter,numberOfPage,phrase };
 };
 
 export default useLoadCharacters;
