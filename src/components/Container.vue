@@ -1,6 +1,7 @@
 <template>
-
-  <button v-if="!show" @click="changeListVisibility()">Show Fav characters</button>
+  <button v-if="!show" @click="changeListVisibility()">
+    Show Fav characters
+  </button>
   <button v-else @click="changeListVisibility()">Hide Fav characters.</button>
   <ul v-if="show">
     <div v-for="favName in favNames" :key="favName">
@@ -25,6 +26,7 @@
           :image="character.image"
           :species="character.species"
           :location="character.location.name"
+          @update-data="updateData"
         />
       </div>
     </div>
@@ -66,6 +68,10 @@ export default defineComponent({
     } = useLoadCharacters();
     const { useGetAllFav } = useLocalStorage();
 
+    const updateData = () => {
+      favNames.value = useGetAllFav();
+    }
+
     onMounted(() => {
       useCharactersFetcher();
       favNames.value = useGetAllFav();
@@ -91,6 +97,7 @@ export default defineComponent({
       changeListVisibility,
       show,
       favNames,
+      updateData
     };
   },
 });
@@ -160,12 +167,12 @@ export default defineComponent({
   transition: all 0.5s ease-in-out;
 }
 @media only screen and (max-width: 600px) {
-  .wrapper{
-    justify-content:center;
+  .wrapper {
+    justify-content: center;
   }
-  .searchBar{
+  .searchBar {
     width: 70vw;
-    margin-top:10px
+    margin-top: 10px;
   }
 }
 </style>
