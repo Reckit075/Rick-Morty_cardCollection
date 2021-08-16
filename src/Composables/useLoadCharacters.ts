@@ -4,7 +4,7 @@ import Character from "../types/Character";
 const useLoadCharacters = () => {
   const characters = ref<Array<Character>>([]);
   const error = ref(null);
-  const phrase = ref<string>('');
+  const phrase = ref<string>("");
   const numberOfPage = ref<number>(2);
   const useCharactersFetcher = () => {
     try {
@@ -19,27 +19,47 @@ const useLoadCharacters = () => {
   };
   const useLoadMore = () => {
     fetch(
-        `https://rickandmortyapi.com/api/character/?page=${numberOfPage.value}`
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          characters.value.push(...data.results);
-          numberOfPage.value = +numberOfPage.value + 1;
-        });
-  }
+      `https://rickandmortyapi.com/api/character/?page=${numberOfPage.value}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        characters.value.push(...data.results);
+        numberOfPage.value = +numberOfPage.value + 1;
+      });
+  };
   const useFilter = (phraseValue: string) => {
     numberOfPage.value = 1;
-    phrase.value = phraseValue
-    fetch(
-      `https://rickandmortyapi.com/api/character/?name=${phraseValue}`
-    )
+    phrase.value = phraseValue;
+    fetch(`https://rickandmortyapi.com/api/character/?name=${phraseValue}`)
       .then((res) => res.json())
       .then((data) => {
         characters.value = data.results;
       });
-  }
+  };
 
-  return { characters,error, useCharactersFetcher,useLoadMore,useFilter,numberOfPage,phrase };
+  const useLoadFav = (ids: Array<number>) => {
+    characters.value = []
+    const results: Array<Character> = [];
+    ids.forEach((id) => {
+      fetch(`https://rickandmortyapi.com/api/character/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          results.push(data);
+          characters.value.push(data);
+        });
+    });
+  };
+
+  return {
+    characters,
+    error,
+    useCharactersFetcher,
+    useLoadMore,
+    useFilter,
+    numberOfPage,
+    phrase,
+    useLoadFav,
+  };
 };
 
 export default useLoadCharacters;

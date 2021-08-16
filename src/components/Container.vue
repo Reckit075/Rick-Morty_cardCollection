@@ -1,13 +1,8 @@
 <template>
   <button v-if="!show" @click="changeListVisibility()">
-    Show Fav characters
+    Show Fav characters.
   </button>
   <button v-else @click="changeListVisibility()">Hide Fav characters.</button>
-  <ul v-if="show">
-    <div v-for="favName in favNames" :key="favName">
-      <li>{{ favName }}</li>
-    </div>
-  </ul>
   <input
     v-model="filterValue"
     type="text"
@@ -26,7 +21,6 @@
           :image="character.image"
           :species="character.species"
           :location="character.location.name"
-          @update-data="updateData"
         />
       </div>
     </div>
@@ -44,7 +38,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted,onUpdated, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import Card from "./Card.vue";
 import useLoadCharacters from "../Composables/useLoadCharacters";
 import useLocalStorage from "../Composables/useLocalStorage";
@@ -62,27 +56,26 @@ export default defineComponent({
       error,
       useCharactersFetcher,
       useLoadMore,
+      useLoadFav,
       useFilter,
       numberOfPage,
       phrase,
     } = useLoadCharacters();
-    const { useGetAllFav } = useLocalStorage();
-
-    const updateData = () => {
-      favNames.value = useGetAllFav();
-    }
+    const { useGetAllFavIds } = useLocalStorage();
 
     onMounted(() => {
       useCharactersFetcher();
-      favNames.value = useGetAllFav();
     });
-    onUpdated(()=>{
-     favNames.value = useGetAllFav();
-    })
 
     const filter = (phraseValue: string) => useFilter(phraseValue);
     const loadMore = () => useLoadMore();
+
     const changeListVisibility = () => {
+      if (!show.value) {
+        useLoadFav(useGetAllFavIds());
+      }else if(show.value){
+        useCharactersFetcher()
+      }
       show.value = !show.value;
     };
 
@@ -97,7 +90,6 @@ export default defineComponent({
       changeListVisibility,
       show,
       favNames,
-      updateData
     };
   },
 });

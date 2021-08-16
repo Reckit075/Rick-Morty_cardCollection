@@ -58,12 +58,10 @@ export default defineComponent({
     const addToFav = (id: number, name: string) => {
       isInFav.value = true;
       useAddToFav(id, name);
-      emit('update-data');
     };
     const removeFromFav = (id: number, name: string) => {
       isInFav.value = false;
       useRemoveFromFav(id, name);
-      emit('update-data');
     };
     return { isInFav, checkIsInFav, addToFav, removeFromFav };
   },

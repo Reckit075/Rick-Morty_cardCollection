@@ -23,7 +23,7 @@ const useLocalStorage = () => {
   };
   const useGetAllFavIds = () => {
     const keys: Array<string> = Object.keys(localStorage);
-    const ids: Array<string> = [];
+    const ids: Array<number> = [];
     for (let i = 0; i < keys.length; i++) {
       const element = keys[i];
       if (element.length < 10) ids.push(JSON.parse(element));
